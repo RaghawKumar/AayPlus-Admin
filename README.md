@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AayPlus admin
 
-## Getting Started
+Next.js administrator panel for the separate AayPlus Node.js API. Review members, listings, bookings, private inspection evidence, disputes and accounting intentions.
 
-First, run the development server:
+## Run
 
-```bash
+```sh
+npm ci
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Preserve an existing `.env.local` instead of overwriting it. Open `http://localhost:3000`. Set `NEXT_PUBLIC_API_BASE_URL` to the backend's `/api/v1` address and restart Next.js after changes.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## First administrator
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Register/sign in with a mobile number first. From the **backend checkout**, grant the account admin access:
 
-## Learn More
+```sh
+npm run admin:promote -- promote-admin +91YOUR_MOBILE_NUMBER
+```
 
-To learn more about Next.js, take a look at the following resources:
+Return to the panel and request a new OTP. Admin accounts are never created from a frontend role field.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Validate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sh
+npm run lint
+npm run build
+```
 
-## Deploy on Vercel
+## Guides
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Full setup](docs/INTEGRATION.md)
+- [Product and review flow](docs/APP-FLOW.md)
+- [UI review](docs/UX-REVIEW.md)
+- [Three-repository workspace](docs/REPOSITORIES.md)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Sessions stay in tab memory. Verification is development-only until a real provider is configured. Ledger entries are accounting intentions, not executed payments.
