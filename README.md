@@ -10,7 +10,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Preserve an existing `.env.local` instead of overwriting it. Open `http://localhost:3000`. Set `NEXT_PUBLIC_API_BASE_URL` to the backend's `/api/v1` address and restart Next.js after changes.
+Preserve an existing `.env.local` instead of overwriting it. Open `http://localhost:3000`. The default API is `https://aayplus-backend.onrender.com/api/v1`; set `NEXT_PUBLIC_API_BASE_URL` to override it, then restart Next.js.
 
 ## First administrator
 

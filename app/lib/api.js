@@ -1,5 +1,5 @@
 import { devLog } from './dev-log.js';
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1').replace(/\/$/, '');
+export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://aayplus-backend.onrender.com/api/v1').replace(/\/$/, '');
 
 export async function request(path, { token, method = 'GET', body } = {}) {
   const start = performance.now();
