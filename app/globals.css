@@ -1147,3 +1147,97 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 .connected-evidence { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
 .connected-evidence a { color: var(--amber); }
 button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Connected workspace: tablet and phone layouts. */
+.workspace-heading, .header-actions, .mobile-cell-value { min-width: 0; }
+.header-search input { min-width: 0; }
+.connected-session > span, .connected-error, .connected-info,
+.connected-policy, .connected-dialog { overflow-wrap: anywhere; }
+.connected-dialog img, .connected-dialog video { max-width: 100%; }
+.connected-evidence > * { min-width: 0; max-width: 100%; }
+.sidebar-backdrop { border: 0; padding: 0; }
+.admin-sidebar { height: 100dvh; }
+.sidebar-nav { min-height: 0; overscroll-behavior: contain; }
+.sidebar-brand, .sidebar-footer { flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .admin-sidebar { width: min(320px, calc(100vw - 24px)); max-width: none; }
+  .admin-sidebar:not(.open) { visibility: hidden; pointer-events: none; }
+  .admin-sidebar.open { visibility: visible; }
+  .sidebar-brand { gap: 8px; padding: 20px 14px; }
+  .brand-badge { display: none; }
+  .sidebar-close-btn, .sidebar-toggle-btn { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+  .nav-item { min-height: 48px; }
+  .workspace-heading { flex: 1 1 auto; }
+  .header-actions { flex: 1 1 auto; }
+  .header-search { flex: 1 1 180px; width: auto; }
+}
+
+@media (max-width: 640px) {
+  .admin-layout, .connected-login { min-height: 100dvh; }
+  .admin-header { gap: 12px; padding: 12px 16px; }
+  .workspace-heading { width: 100%; }
+  .workspace-breadcrumb { font-size: 13px; }
+  .workspace-eyebrow { font-size: 10px; letter-spacing: 1.3px; }
+  .header-actions { width: 100%; margin: 0; flex-wrap: nowrap; }
+  .header-search { order: 0; flex: 1; min-height: 44px; padding: 8px 12px; }
+  .header-actions > .btn { flex-shrink: 0; }
+  .admin-content { padding: 20px 16px max(24px, env(safe-area-inset-bottom)); }
+  .page-header { align-items: flex-start; margin-bottom: 20px; }
+  .page-title { font-size: clamp(22px, 6vw, 28px); line-height: 1.25; overflow-wrap: anywhere; }
+  .page-subtitle { font-size: 13px; line-height: 1.6; }
+  .connected-session { align-items: flex-start; margin-bottom: 22px; line-height: 1.6; }
+  .connected-session > span { flex: 1; min-width: 0; }
+  .connected-session > button { flex-shrink: 0; }
+  .btn, .btn-sm { min-height: 44px; white-space: normal; }
+  .stats-grid, .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-card { min-width: 0; padding: 16px 14px; }
+  .stat-card-value { font-size: clamp(26px, 8vw, 36px); }
+  .operations-queue button { min-height: 76px; padding: 16px; }
+  .operations-queue button > span:last-child { margin-left: 0; }
+  .connected-info, .connected-error { padding: 14px; }
+  .connected-policy { padding: 20px; }
+
+  /* Keep every column/action, but stack each record into a labeled card. */
+  .connected-table { background: transparent; border: 0; box-shadow: none; overflow: visible; }
+  .connected-table .admin-table { display: block; min-width: 0; width: 100%; }
+  .connected-table thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .connected-table tbody { display: grid; gap: 14px; }
+  .connected-table tr { display: block; min-width: 0; border: 1px solid var(--border-color); border-radius: 16px; background: var(--bg-card); overflow: hidden; }
+  .connected-table td { display: grid; grid-template-columns: minmax(76px, 28%) minmax(0, 1fr); gap: 14px; align-items: start; padding: 14px 16px; font-size: 13px; line-height: 1.6; }
+  .connected-table td::before { content: attr(data-label); color: var(--text-muted); font-size: 11px; font-weight: 600; padding-top: 2px; }
+  .connected-table td:last-child { border-bottom: 0; }
+  .connected-table td:first-child { background: var(--bg-main); }
+  .mobile-cell-value { overflow-wrap: anywhere; }
+  .connected-table .connected-id { font-size: 11px; }
+  .connected-table .badge { white-space: normal; max-width: 100%; }
+  .connected-table .connected-actions { gap: 8px; }
+  .connected-table .connected-actions > .btn { flex: 1 1 100%; }
+  .connected-table .connected-empty { display: block; padding: 28px 20px !important; }
+  .connected-table .connected-empty::before { content: none; }
+
+  .connected-login { padding: 20px 16px; }
+  .connected-login-card { padding: 26px 20px; gap: 16px; }
+  .connected-login-card h1 { font-size: 28px; }
+  .connected-login-card label { margin-block: 6px; }
+  .connected-login-card input, .connected-dialog input, .connected-dialog textarea { font-size: 16px; min-height: 48px; }
+  .connected-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); padding: 20px; border-radius: 18px; overscroll-behavior: contain; }
+  .connected-dialog-header { align-items: flex-start; gap: 12px; }
+  .connected-dialog-header h2 { font-size: 20px; line-height: 1.35; min-width: 0; }
+  .connected-dialog-header > button { min-width: 44px; flex-shrink: 0; }
+  .connected-dialog form > button { width: 100%; }
+  .connected-evidence { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .connected-evidence img { height: auto; }
+}
+.header-search { min-width: 0; }
+.header-search > svg { flex-shrink: 0; }
+@media (max-width: 900px) {
+  .sidebar-brand > div:first-child { min-width: 0; flex: 1; }
+  .sidebar-brand > div:first-child > div:first-child { flex-shrink: 0; }
+  .sidebar-brand > div:first-child > div:last-child { min-width: 0; }
+  .sidebar-brand > div:first-child > div:last-child > div { overflow-wrap: anywhere; }
+}
+@media (max-width: 640px) {
+  .admin-content .page-header > div:first-child { display: block; width: 100%; min-width: 0; }
+  .connected-session { font-size: 12px; }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Children, cloneElement, isValidElement, useCallback, useEffect, useRef, useState } from 'react';
 import { devLog, logClick } from './lib/dev-log';
 import InspectionMedia from './components/InspectionMedia';
 import Sidebar from './components/Sidebar';
@@ -87,6 +87,7 @@ export default function AdminDashboardPage() {
     } catch (err) { if (err.status === 401) clearSession(); setError(err.message); return false; }
     finally { setBusy(false); }
   }
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const navigate = tab => { setTab(tab); setSearchQuery(''); setSidebarOpen(false); };
   const matches = row => !searchQuery || JSON.stringify(row).toLowerCase().includes(searchQuery.toLowerCase());
   const bookingById = Object.fromEntries(data.bookings.map(b => [b.id, b]));
@@ -97,7 +98,8 @@ export default function AdminDashboardPage() {
   }
   const badge = status => <span className={`badge ${['verified', 'active', 'completed', 'resolved', 'approved'].includes(status) ? 'badge-emerald' : 'badge-amber'}`}>{String(status).replaceAll('_', ' ')}</span>;
   function table(headings, rows) {
-    return <div className="card-box table-responsive"><table className="admin-table"><thead><tr>{headings.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.length ? rows : <tr><td colSpan={headings.length} className="connected-empty">No records found. New app activity will appear here.</td></tr>}</tbody></table></div>;
+    const labeledRows = rows.map(row => cloneElement(row, { role: 'row' }, Children.toArray(row.props.children).filter(isValidElement).map((cell, index) => cloneElement(cell, { 'data-label': headings[index], role: 'cell' }, <div className="mobile-cell-value">{cell.props.children}</div>))));
+    return <div className="card-box table-responsive connected-table"><table className="admin-table" role="table" aria-label={titles[currentTab]}><thead role="rowgroup"><tr role="row">{headings.map(h => <th key={h} scope="col" role="columnheader">{h}</th>)}</tr></thead><tbody role="rowgroup">{rows.length ? labeledRows : <tr role="row"><td role="cell" colSpan={headings.length} className="connected-empty">No records found. New app activity will appear here.</td></tr>}</tbody></table></div>;
   }
   if (!session) return <main className="connected-login" onClickCapture={logClick}><form onSubmit={authenticate} className="card-box connected-login-card">
     <div className="workspace-eyebrow">AAYPLUS OPERATIONS</div><h1>Welcome back.</h1><p>Sign in with your administrator account to manage the shared marketplace.</p>
@@ -112,9 +114,9 @@ export default function AdminDashboardPage() {
 
   return <div className="admin-layout" onClickCapture={logClick}>
     <a className="skip-link" href="#main-content">Skip to content</a>
-    <Sidebar currentTab={currentTab} setCurrentTab={navigate} stats={{ pendingDisputes: data.stats.pendingDisputes || 0, pendingKyc: data.stats.unverifiedUsers || 0 }} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-    <div className="admin-main">
-      <TopHeader currentTab={currentTab} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onResetData={load} onOpenSidebar={() => setSidebarOpen(true)} connected loading={loading} />
+    <Sidebar currentTab={currentTab} setCurrentTab={navigate} stats={{ pendingDisputes: data.stats.pendingDisputes || 0, pendingKyc: data.stats.unverifiedUsers || 0 }} isOpen={sidebarOpen} onClose={closeSidebar} />
+    <div className="admin-main" aria-hidden={sidebarOpen || undefined}>
+      <TopHeader currentTab={currentTab} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onResetData={load} onOpenSidebar={() => setSidebarOpen(true)} sidebarOpen={sidebarOpen} connected loading={loading} />
       <main id="main-content" className="admin-content" tabIndex={-1}>
         <div className="connected-session"><span>{session.user.name} · {updated ? `Updated ${updated.toLocaleTimeString('en-IN')}` : 'Connecting…'} · Refreshes every 15 seconds</span><button className="btn btn-outline btn-sm" disabled={busy} onClick={async () => {
           setBusy(true);
@@ -134,7 +136,7 @@ export default function AdminDashboardPage() {
         </>}
         {currentTab === 'users' && table(['Member', 'Phone', 'Role', 'Verification', 'Review'], data.users.filter(matches).map(row => <tr key={row.id}>
           <td><strong>{row.name}</strong><div className="connected-id">{row.email || row.id}</div></td><td>{row.phone}</td><td>{row.role}</td><td>{badge(row.kyc_status)}</td><td><div className="connected-actions">
-            <button className="btn btn-secondary btn-sm" disabled={busy || row.kyc_status === 'verified'} onClick={() => mutate(`/admin/users/${row.id}/kyc`, { status: 'verified' })}>Verify (development)</button>
+            <button className="btn btn-secondary btn-sm" disabled={busy || row.kyc_status === 'verified'} onClick={() => mutate(`/admin/users/${row.id}/kyc`, { status: 'verified' })}>Verify member</button>
             <button className="btn btn-outline btn-sm" disabled={busy || row.kyc_status === 'rejected'} onClick={() => mutate(`/admin/users/${row.id}/kyc`, { status: 'rejected' })}>Reject</button>
           </div></td>
         </tr>))}

@@ -5,13 +5,13 @@ const sectionNames = {
   bookings: "Bookings", payments: "Payments", policies: "Policies",
 };
 
-export default function TopHeader({ searchQuery, setSearchQuery, onResetData, onOpenSidebar, currentTab, connected = false, loading = false }) {
+export default function TopHeader({ searchQuery, setSearchQuery, onResetData, onOpenSidebar, currentTab, sidebarOpen = false, connected = false, loading = false }) {
   const searchable = !["overview", "policies"].includes(currentTab);
   const name = sectionNames[currentTab] || "Overview";
   return (
     <header className="admin-header">
       <div className="workspace-heading">
-        <button className="sidebar-toggle-btn" onClick={onOpenSidebar} aria-label="Open navigation">
+        <button className="sidebar-toggle-btn" onClick={onOpenSidebar} aria-label="Open navigation" aria-controls="admin-navigation" aria-expanded={sidebarOpen}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
         </button>
         <div><div className="workspace-eyebrow">AAYPLUS WORKSPACE</div><div className="workspace-breadcrumb">Operations <span>/</span> <strong>{name}</strong></div></div>

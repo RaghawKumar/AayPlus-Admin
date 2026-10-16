@@ -1,19 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Sidebar({ currentTab, setCurrentTab, stats, isOpen, onClose }) {
+  const drawer = useRef(null);
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
-    if (!isOpen) return;
+    const query = window.matchMedia('(max-width: 900px)');
+    const update = () => { setMobile(query.matches); if (!query.matches) onClose(); };
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, [onClose]);
+  useEffect(() => {
+    if (!isOpen || !mobile) return;
+    const previousFocus = document.activeElement === document.body ? document.querySelector('.sidebar-toggle-btn') : document.activeElement;
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const closeOnEscape = (event) => { if (event.key === "Escape") onClose(); };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
+    document.body.style.overflow = 'hidden';
+    const focusable = () => [...drawer.current.querySelectorAll('button:not(:disabled), a[href], [tabindex="0"]')];
+    const focusTimer = window.setTimeout(() => focusable()[0]?.focus({ preventScroll: true }), 300);
+    const keydown = event => {
+      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab') return;
+      const elements = focusable(), first = elements[0], last = elements.at(-1);
+      if (!drawer.current.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first)?.focus(); return; }
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     };
-  }, [isOpen, onClose]);
+    window.addEventListener('keydown', keydown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', keydown);
+      previousFocus?.focus();
+    };
+  }, [isOpen, mobile, onClose]);
   const navItems = [
     {
       id: "overview",
@@ -120,9 +141,9 @@ export default function Sidebar({ currentTab, setCurrentTab, stats, isOpen, onCl
   return (
     <>
       {/* Mobile Backdrop */}
-      {isOpen && <div className="sidebar-backdrop" onClick={onClose} />}
+      {isOpen && <button type="button" className="sidebar-backdrop" onClick={onClose} aria-label="Close navigation backdrop" tabIndex={-1} />}
 
-      <aside className={`admin-sidebar ${isOpen ? "open" : ""}`}>
+      <aside ref={drawer} id="admin-navigation" aria-label="Admin navigation" role={mobile && isOpen ? "dialog" : undefined} aria-modal={mobile && isOpen ? true : undefined} inert={mobile && !isOpen} className={`admin-sidebar ${isOpen ? "open" : ""}`}>
         {/* Brand Header */}
         <div className="sidebar-brand">
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
