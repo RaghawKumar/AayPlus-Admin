@@ -1,5 +1,7 @@
 import { devLog } from './dev-log.js';
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://aayplus-backend.onrender.com/api/v1').replace(/\/$/, '');
+export const API_BASE_URL = process.env.NODE_ENV === 'development'
+  ? '/api/v1'
+  : (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://aayplus-backend.onrender.com/api/v1').replace(/\/+$/, '');
 
 export async function request(path, { token, method = 'GET', body } = {}) {
   const start = performance.now();
@@ -8,7 +10,7 @@ export async function request(path, { token, method = 'GET', body } = {}) {
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method, headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
-      body: body === undefined ? undefined : JSON.stringify(body), cache: 'no-store', signal: AbortSignal.timeout(15000),
+      body: body === undefined ? undefined : JSON.stringify(body), cache: 'no-store', signal: AbortSignal.timeout(process.env.NODE_ENV === 'development' ? 65000 : 15000),
     });
   } catch { devLog('api.error', { method, path: path.split('?')[0], type: 'connection or timeout' }); throw new Error('Cannot reach the API. Check the backend address and connection.'); }
   let payload;

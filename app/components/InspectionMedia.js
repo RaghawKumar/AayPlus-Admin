@@ -8,8 +8,9 @@ export default function InspectionMedia({ path, token, video = false }) {
   useEffect(() => {
     const controller = new AbortController();
     let objectUrl;
-    const url = new URL(path, `${API_BASE_URL}/`);
-    const internal = url.origin === new URL(API_BASE_URL).origin;
+    const base = new URL(`${API_BASE_URL}/`, window.location.origin);
+    const url = new URL(path, base);
+    const internal = url.origin === base.origin;
     fetch(url, { headers: internal ? { Authorization: `Bearer ${token}` } : {}, signal: controller.signal, cache: 'no-store' })
       .then(response => { if (!response.ok) throw new Error('Evidence unavailable'); return response.blob(); })
       .then(blob => { if (controller.signal.aborted) return; objectUrl = URL.createObjectURL(blob); setSource(objectUrl); })

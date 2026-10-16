@@ -37,3 +37,14 @@ npm run build
 - [Three-repository workspace](docs/REPOSITORIES.md)
 
 Sessions stay in tab memory. Verification is development-only until a real provider is configured. Ledger entries are accounting intentions, not executed payments.
+
+## Local admin with the live backend
+
+`npm run dev` sends browser API requests through the local `/api/v1` route to
+NEXT_PUBLIC_API_BASE_URL. This works on localhost and LAN URLs such as
+http://192.168.1.29:3000 without adding each address to Render CORS. The proxy
+forwards the user's bearer token and preserves backend authorization and OTP
+behavior. It is disabled in production; the live admin keeps its direct API URL.
+Restart Next.js after changing `.env.local`. In static OTP mode, request a code
+and enter the configured test code (currently 123456); no SMS is sent and the
+backend does not return the static code.
